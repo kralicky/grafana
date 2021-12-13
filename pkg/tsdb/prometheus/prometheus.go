@@ -121,8 +121,10 @@ func (s *Service) QueryData(ctx context.Context, req *backend.QueryDataRequest) 
 }
 
 func createClient(url string, httpOpts sdkhttpclient.Options, clientProvider httpclient.Provider) (apiv1.API, error) {
-	customMiddlewares := customQueryParametersMiddleware(plog)
-	httpOpts.Middlewares = []sdkhttpclient.Middleware{customMiddlewares}
+	httpOpts.Middlewares = []sdkhttpclient.Middleware{
+		customQueryParametersMiddleware(plog),
+		backendQueryMiddleware(plog),
+	}
 
 	roundTripper, err := clientProvider.GetTransport(httpOpts)
 	if err != nil {
